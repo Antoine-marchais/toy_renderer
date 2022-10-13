@@ -9,7 +9,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 )
 
 find_package(PNG REQUIRED)
-include_directories(${PNG_INCLUDE_DIRS})
+include_directories(${PNG_INCLUDE_DIR})
 target_link_libraries(${CMAKE_PROJECT_NAME} 
   PUBLIC ${PNG_LIBRARY}
 )

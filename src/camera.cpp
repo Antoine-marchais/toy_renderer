@@ -1,5 +1,6 @@
 #include "camera.hpp"
 #include <png++/png.hpp>
+#include <algorithm>
 
 using namespace png;
 

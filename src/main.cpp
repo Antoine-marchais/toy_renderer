@@ -4,6 +4,7 @@
 using namespace std;
 
 int main() {
+    cout << "Hello stream";
     Camera cam = Camera(600, 840);
     Scene scene = Scene();
     Vector3D v1(-0.2, -0.2, 1.1);

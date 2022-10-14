@@ -6,9 +6,6 @@
 
 For building the project, cmake and a c++ must be available on the system
 
-This project uses `libpng` and the `png++` wrapper. `libpng` should be installed on the system, but the `png++`
-headers must be downloaded and installed from the [png++ website](https://www.nongnu.org/pngpp/doc/0.2.9/)
-
 ### Building the project
 
 Once cmake is installed you can simply run the following command in the root directory to configure and build the project.

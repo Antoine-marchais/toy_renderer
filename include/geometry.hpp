@@ -60,6 +60,27 @@ public:
     Triangle(Vector3D v1, Vector3D v2, Vector3D v3, unsigned char r, unsigned char g, unsigned char b);
 };
 
+class Face
+{
+public:
+    int n_vertices;
+    unsigned char color[3];
+    Vector3D *vertices;
+    Face() = default;
+    Face(const Face& face);
+    Face(Vector3D vertices[], int n_vertices);
+    Face(Vector3D vertices[], int n_vertices, unsigned char r, unsigned char g, unsigned char b);
+    ~Face();
+};
+
+Vector2D projectToPlane(Vector3D v1, Vector3D v2, Vector3D v3, Vector3D expanded);
+
+Vector3D expandFromPlane(Vector3D v1, Vector3D v2, Vector3D v3, Vector2D projected);
+
+bool isMonotone(Face face);
+
+int triangulate(Face face, Triangle** out);
+
 Vector3D rotate(Vector3D vec, Vector3D center, Vector3D axis, double angle);
 
 ostream& operator<<(ostream& os, const Triangle& tri);

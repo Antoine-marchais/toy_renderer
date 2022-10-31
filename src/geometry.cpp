@@ -1,6 +1,7 @@
 #include <iostream>
 #include "geometry.hpp"
 #include <cmath>
+#include <string.h>
 using namespace std;
 
 Vector2D::Vector2D(double x, double y){
@@ -125,6 +126,64 @@ Triangle::Triangle(Vector3D v1, Vector3D v2, Vector3D v3, unsigned char r, unsig
     this->color[0] = r;
     this->color[1] = g;
     this->color[2] = b;
+}
+
+Face::Face(const Face& face): n_vertices(face.n_vertices), vertices(new Vector3D[face.n_vertices]){
+    memcpy(color, face.color, 3);
+    memcpy(vertices, face.vertices, sizeof(Vector3D) * face.n_vertices);
+}
+
+Face::Face(Vector3D vertices[], int n_vertices){
+    this->n_vertices = n_vertices;
+    this->vertices = new Vector3D[n_vertices];
+    for (int i=0; i<n_vertices; i++){
+        this->vertices[i] = vertices[i];
+    }
+    this->color[0] = 255;
+    this->color[1] = 255;
+    this->color[2] = 255;
+}
+
+Face::Face(Vector3D vertices[], int n_vertices, unsigned char r, unsigned char g, unsigned char b): Face(vertices, n_vertices){
+    this->color[0] = r;
+    this->color[1] = g;
+    this->color[2] = b;
+}
+
+Face::~Face(){
+    delete[] vertices;
+}
+
+Vector2D projectToPlane(Vector3D v1, Vector3D v2, Vector3D v3, Vector3D expanded){
+    Vector3D x_axis = (v2 - v1)/(v2 - v1).norm();
+    Vector3D y_axis = (v3 - v1) - x_axis * x_axis.dot(v3-v1);
+    y_axis = y_axis / y_axis.norm();
+    return Vector2D((expanded-v1).dot(x_axis), (expanded-v1).dot(y_axis));
+}
+
+Vector3D expandFromPlane(Vector3D v1, Vector3D v2, Vector3D v3, Vector2D projected){
+    Vector3D x_axis = (v2 - v1)/(v2 - v1).norm();
+    Vector3D y_axis = (v3 - v1) - x_axis * x_axis.dot(v3-v1);
+    y_axis = y_axis / y_axis.norm();
+    return v1 + x_axis * projected.x + y_axis * projected.y;
+}
+
+bool isMonotone(Face face){
+    int inflexions = 0;
+    Vector2D current_point = projectToPlane(*face.vertices, *(face.vertices+1), *(face.vertices+2), *face.vertices);
+    Vector2D new_point = projectToPlane(*face.vertices, *(face.vertices+1), *(face.vertices+2), *(face.vertices+1));
+    bool going_up = new_point.y > current_point.y || ((new_point.y == current_point.y) && (new_point.x > current_point.x));
+    bool new_going_up;
+    for (int i=2; i <= face.n_vertices+1; i++){
+        current_point = new_point;
+        new_point = projectToPlane(*face.vertices, *(face.vertices+1), *(face.vertices+2), *(face.vertices+(i%face.n_vertices)));
+        new_going_up = new_point.y > current_point.y || ((new_point.y == current_point.y) && (new_point.x > current_point.x));
+        if (new_going_up != going_up){
+            inflexions++;
+        }
+        going_up = new_going_up;
+    }
+    return inflexions <= 2;
 }
 
 ostream& operator<<(ostream& os, const Vector2D& vec){

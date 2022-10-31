@@ -76,3 +76,43 @@ TEST(GeomTest, pointInVertices){
     EXPECT_TRUE(pointInsideVertices(point_in, v1, v2, v3));
     EXPECT_FALSE(pointInsideVertices(point_out, v1, v2, v3));
 }
+
+TEST(GeomTest, projectToPlane){
+    Vector3D v1(1, 1, 3);
+    Vector3D v2(3, 1, 3);
+    Vector3D v3(2, 3, 3);
+    Vector3D point(2, 2, 3);
+    Vector3D axis = (v2-v1)/(v2-v1).norm();
+    Vector3D rotatedV3 = rotate(v3, v1, axis, 30);
+    Vector3D rotatedPoint = rotate(point, v1, axis, 30);
+    Vector2D projected = projectToPlane(v1, v2, v3, point);
+    Vector2D rotatedProjected = projectToPlane(v1, v2, rotatedV3, rotatedPoint);
+    Vector2D expected = Vector2D(1, 1);
+    EXPECT_TRUE(VectorNear(projected, expected, 0.000001));
+    EXPECT_TRUE(VectorNear(rotatedProjected, expected, 0.000001));
+}
+
+TEST(GeomTest, expandFromPlane){
+    Vector3D v1(1, 1, 3);
+    Vector3D v2(3, 1, 3);
+    Vector3D v3(2, 3, 3);
+    Vector3D point(2, 2, 3);
+    Vector3D axis = (v2-v1)/(v2-v1).norm();
+    Vector3D rotatedV3 = rotate(v3, v1, axis, 30);
+    Vector3D rotatedPoint = rotate(point, v1, axis, 30);
+    Vector2D rotatedProjected = projectToPlane(v1, v2, rotatedV3, rotatedPoint);
+    Vector3D expanded = expandFromPlane(v1, v2, rotatedV3, rotatedProjected);
+    EXPECT_TRUE(VectorNear(rotatedPoint, expanded, 0.000001));
+}
+
+TEST(GeomTest, monotonePolygon){
+    Vector3D vertices[6] = {Vector3D(0,0,0), Vector3D(1,0,0), Vector3D(1.5,1,0), Vector3D(1,2,0), Vector3D(0,2,0), Vector3D(-0.5,1,0)};
+    Face hexagon(vertices, 6);
+    EXPECT_TRUE(isMonotone(hexagon));
+}
+
+TEST(GeomTest, nonMonotonePolygon){
+  Vector3D vertices[7] = {Vector3D(0,0,0), Vector3D(2,0,0), Vector3D(3,1,0), Vector3D(2,2,0), Vector3D(1,1,0), Vector3D(0,2,0), Vector3D(-1,1,0)};
+  Face heart(vertices, 7);
+  EXPECT_FALSE(isMonotone(heart));
+}

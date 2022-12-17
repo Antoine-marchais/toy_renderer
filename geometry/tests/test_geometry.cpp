@@ -104,15 +104,3 @@ TEST(GeomTest, expandFromPlane){
     Vector3D expanded = expandFromPlane(v1, v2, rotatedV3, rotatedProjected);
     EXPECT_TRUE(VectorNear(rotatedPoint, expanded, 0.000001));
 }
-
-TEST(GeomTest, monotonePolygon){
-    Vector3D vertices[6] = {Vector3D(0,0,0), Vector3D(1,0,0), Vector3D(1.5,1,0), Vector3D(1,2,0), Vector3D(0,2,0), Vector3D(-0.5,1,0)};
-    Face hexagon(vertices, 6);
-    EXPECT_TRUE(isMonotone(hexagon));
-}
-
-TEST(GeomTest, nonMonotonePolygon){
-  Vector3D vertices[7] = {Vector3D(0,0,0), Vector3D(2,0,0), Vector3D(3,1,0), Vector3D(2,2,0), Vector3D(1,1,0), Vector3D(0,2,0), Vector3D(-1,1,0)};
-  Face heart(vertices, 7);
-  EXPECT_FALSE(isMonotone(heart));
-}

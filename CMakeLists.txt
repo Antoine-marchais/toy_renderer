@@ -25,3 +25,4 @@ include_directories(build/include)
 
 add_subdirectory(geometry)
 add_subdirectory(renderer)
+add_subdirectory(object_loader)
